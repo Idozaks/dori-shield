@@ -1,0 +1,9 @@
+{
+  "name": "Dori Anti-Scam Shield",
+  "description": "A safe sandbox for seniors to analyze and simulate suspicious messages and scams without risk.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
