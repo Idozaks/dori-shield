@@ -14,7 +14,7 @@ export interface SimulationField {
   type: 'text' | 'password' | 'button' | 'info';
   isTrap: boolean;
   doriWarning?: string;
-  safetyReason?: string; // New: Explains why this specific element is safe
+  safetyReason?: string;
 }
 
 export interface SimulationStep {
@@ -24,7 +24,7 @@ export interface SimulationStep {
   siteUrl: string;
   urlIsTrap?: boolean;
   urlDoriWarning?: string;
-  urlSafetyReason?: string; // New: Explains why the URL is safe
+  urlSafetyReason?: string;
   headerColor: string;
   fields: SimulationField[];
   doriIntro: string;
@@ -32,7 +32,7 @@ export interface SimulationStep {
 
 export interface SimulationData {
   brandName: string;
-  visualVibePrompt: string; // Used for gemini-2.5-flash-image
+  visualVibePrompt: string;
   steps: SimulationStep[];
 }
 
@@ -45,4 +45,9 @@ export interface AnalysisResult {
   simulation: SimulationData;
 }
 
-export type AppState = 'IDLE' | 'ANALYZING' | 'RESULT' | 'SANDBOX' | 'FINISHED' | 'LIBRARY' | 'REPORT';
+export interface UserPersona {
+  ageGroup: string;
+  familiarity: 'beginner' | 'intermediate' | 'expert';
+}
+
+export type AppState = 'LANDING' | 'ONBOARDING' | 'IDLE' | 'ANALYZING' | 'RESULT' | 'SANDBOX' | 'FINISHED' | 'LIBRARY' | 'REPORT' | 'ABOUT';
