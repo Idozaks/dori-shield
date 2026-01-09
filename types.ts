@@ -50,4 +50,4 @@ export interface UserPersona {
   familiarity: 'beginner' | 'intermediate' | 'expert';
 }
 
-export type AppState = 'LANDING' | 'ONBOARDING' | 'IDLE' | 'ANALYZING' | 'RESULT' | 'SANDBOX' | 'FINISHED' | 'LIBRARY' | 'REPORT' | 'ABOUT';
+export type AppState = 'LANDING' | 'ONBOARDING' | 'IDLE' | 'ANALYZING' | 'RESULT' | 'SANDBOX' | 'FINISHED' | 'LIBRARY' | 'ABOUT' | 'SCANNER' | 'LIVE_CONSULTATION';

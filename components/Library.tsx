@@ -1,6 +1,7 @@
 
-import React from 'react';
-import { BookOpen, Info, ShieldAlert, Heart, PhoneCall, Gift, Landmark, Send, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { BookOpen, Info, ShieldAlert, Heart, PhoneCall, Gift, Landmark, Send, MessageCircle, RefreshCw, ExternalLink, Globe } from 'lucide-react';
+import { fetchScamNews } from '../services/gemini';
 
 const RESOURCES = [
   {
@@ -20,42 +21,79 @@ const RESOURCES = [
     icon: <PhoneCall className="text-blue-500" />,
     desc: "הודעה קופצת במחשב שטוענת שיש וירוס ומציגה מספר טלפון ל'עזרה' מיידית.",
     tip: "חברות כמו מיקרוסופט או אפל לעולם לא יציגו מספר טלפון בתוך הודעת אזהרה קופצת."
-  },
-  {
-    title: "הודעת בנק דחופה",
-    icon: <Landmark className="text-sky-600" />,
-    desc: "הודעה על 'פעילות חשודה' בחשבון שלכם עם בקשה להזדהות מחדש דרך קישור.",
-    tip: "הבנק לעולם לא יבקש סיסמה או פרטי כרטיס אשראי דרך קישור בהודעת טקסט."
-  },
-  {
-    title: "זכייה בלוטו/פיס",
-    icon: <Gift className="text-amber-500" />,
-    desc: "הודעה המבשרת שזכיתם בפרס כספי גדול, אך עליכם לשלם 'מס' או 'עמלה' כדי לקבלו.",
-    tip: "אם לא קניתם כרטיס - לא זכיתם. לעולם אל תשלמו כסף כדי 'לקבל' פרס."
-  },
-  {
-    title: "ביטוח לאומי/משרדי ממשלה",
-    icon: <Info className="text-blue-400" />,
-    desc: "מסרונים המבקשים 'לעדכן פרטים' כדי לקבל החזר מס או קצבה מיוחדת.",
-    tip: "היכנסו לאזור האישי באתר הממשלתי הרשמי בלבד (Gov.il) ולא דרך קישורים בהודעות."
-  },
-  {
-    title: "הונאות רומנטיקה",
-    icon: <MessageCircle className="text-red-400" />,
-    desc: "פרופילים מזויפים ברשתות חברתיות שמפתחים קשר רגשי ואז מבקשים כסף ל'מקרה חירום'.",
-    tip: "לעולם אל תעבירו כסף לאדם שמעולם לא פגשתם פנים אל פנים."
-  },
-  {
-    title: "בקשת תשלום ב-Bit",
-    icon: <Send className="text-sky-500" />,
-    desc: "הודעות המבקשות 'אישור תשלום' או טוענות שקיבלתם כסף ועליכם ללחוץ על קישור.",
-    tip: "ודאו שאתם פותחים את אפליקציית ביט (Bit) המקורית מהטלפון ולא דרך קישור חיצוני."
   }
 ];
 
 const Library: React.FC = () => {
+  const [news, setNews] = useState<any>(null);
+  const [isLoadingNews, setIsLoadingNews] = useState(false);
+
+  useEffect(() => {
+    handleFetchNews();
+  }, []);
+
+  const handleFetchNews = async () => {
+    setIsLoadingNews(true);
+    try {
+      const data = await fetchScamNews();
+      setNews(data);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingNews(false);
+    }
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 text-right">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 text-right" dir="rtl">
+      {/* Real-time Alerts Section */}
+      <div className="bg-slate-900 text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-red-500/20 to-transparent pointer-events-none" />
+        <div className="flex items-center justify-between mb-6 relative z-10 flex-row-reverse">
+          <div className="flex items-center gap-3 flex-row-reverse">
+            <Globe className="text-red-400 animate-pulse" />
+            <h2 className="text-2xl font-brand font-black">התראות חמות מהשטח</h2>
+          </div>
+          <button 
+            onClick={handleFetchNews} 
+            disabled={isLoadingNews}
+            className="p-2 bg-white/10 rounded-xl hover:bg-white/20 transition-all"
+          >
+            <RefreshCw size={20} className={isLoadingNews ? 'animate-spin' : ''} />
+          </button>
+        </div>
+
+        {isLoadingNews ? (
+          <div className="flex flex-col items-center py-10 space-y-4">
+            <RefreshCw className="animate-spin text-sky-400" size={32} />
+            <p className="text-slate-400 font-bold">דורי סורק את החדשות עבורכם...</p>
+          </div>
+        ) : news ? (
+          <div className="space-y-4 relative z-10">
+            <div className="bg-white/5 p-5 rounded-2xl border border-white/10">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">{news.text}</p>
+            </div>
+            <div className="flex flex-wrap gap-2 justify-end">
+              {news.sources?.map((chunk: any, i: number) => (
+                chunk.web && (
+                  <a 
+                    key={i} 
+                    href={chunk.web.uri} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 bg-sky-500/20 text-sky-300 px-3 py-1.5 rounded-full text-[10px] font-black hover:bg-sky-500/40 transition-all border border-sky-500/30"
+                  >
+                    מקור {i+1} <ExternalLink size={12} />
+                  </a>
+                )
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-slate-500 text-center py-10">לחצו על רענון כדי לקבל את החדשות האחרונות.</p>
+        )}
+      </div>
+
       <div className="bg-sky-50 p-6 rounded-3xl border border-sky-100">
         <h2 className="text-xl font-brand font-bold text-sky-800 flex items-center gap-2 mb-2 flex-row-reverse">
           <BookOpen className="w-6 h-6" />

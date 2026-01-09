@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ShieldCheck, AlertCircle, ArrowRight, User, Lock, ChevronDown, CheckCircle2, Loader2, Info, Image as ImageIcon, Shield } from 'lucide-react';
+import { ShieldCheck, ArrowRight, User, Lock, CheckCircle2, Loader2, Image as ImageIcon, Search, AlertTriangle, Target, Handshake, Fingerprint } from 'lucide-react';
 import DoriAssistant from './DoriAssistant';
 import { AnalysisResult, SimulationField, SimulationStep } from '../types';
 import { generateSandboxImage } from '../services/gemini';
@@ -25,7 +25,6 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
   const currentStep = result.simulation.steps[currentStepIdx] || result.simulation.steps[0];
   const itemsFoundInCurrentStep = touchedItems[currentStep.id] || [];
   
-  // Interactive elements are either just the traps (Scam Mode) or everything (Safe Mode)
   const interactiveElements = result.isScam 
     ? [...currentStep.fields.filter(f => f.isTrap), ...(currentStep.urlIsTrap ? [{id: 'url-trap'}] : [])]
     : [...currentStep.fields, {id: 'url-trap'}];
@@ -99,7 +98,7 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
 
   return (
     <div className={`fixed inset-0 z-[100] flex flex-col bg-slate-50 overflow-hidden ${vibrate ? 'shake' : ''}`}>
-      {/* 1. Parallax Background Layer */}
+      {/* Background Layer */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div 
           className="absolute inset-0 transition-opacity duration-1000 bg-slate-900"
@@ -120,57 +119,57 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
       {isImgLoading && !bgImage && (
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-black/40 backdrop-blur-md text-white/70 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 animate-pulse">
           <ImageIcon size={12} />
-          Dori is painting the scene...
+          דורי מכין עבורכם את פינת התרגול...
         </div>
       )}
 
       {isChangingStep && (
         <div className="absolute inset-0 z-[200] bg-slate-900 flex flex-col items-center justify-center animate-in fade-in duration-300">
           <Loader2 className="w-12 h-12 text-sky-400 animate-spin mb-4" />
-          <p className="font-brand font-bold text-white text-lg tracking-wide">Next Lesson Loading...</p>
+          <p className="font-brand font-bold text-white text-lg tracking-wide">עוברים לשלב הבא של האימון...</p>
         </div>
       )}
 
-      {/* Dori Control Header */}
-      <div className="relative z-20 bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-5 py-4 flex items-center justify-between flex-shrink-0 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className={`${result.isScam ? 'bg-amber-500' : 'bg-green-500'} p-2 rounded-xl shadow-lg`}>
-            {result.isScam ? <AlertCircle className="w-4 h-4 text-white" /> : <ShieldCheck className="w-4 h-4 text-white" />}
+      {/* Control Header */}
+      <div className="relative z-20 bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-5 py-4 flex items-center justify-between flex-shrink-0 shadow-xl flex-row-reverse">
+        <div className="flex items-center gap-3 flex-row-reverse text-right">
+          <div className={`${result.isScam ? 'bg-sky-500' : 'bg-emerald-500'} p-2 rounded-xl shadow-lg`}>
+            {result.isScam ? <Search className="w-4 h-4 text-white" /> : <ShieldCheck className="w-4 h-4 text-white" />}
           </div>
           <div className="flex flex-col">
             <h2 className="text-white font-brand text-xs font-bold uppercase tracking-widest leading-none">
-              {result.isScam ? 'Trap Finder' : 'Safety Check'}
+              {result.isScam ? 'מוצאים רמזים' : 'בודקים אמינות'}
             </h2>
             <span className="text-slate-400 text-[9px] font-black uppercase mt-1">
-              Step {currentStepIdx + 1} of {result.simulation.steps.length}
+              שלב {currentStepIdx + 1} מתוך {result.simulation.steps.length}
             </span>
           </div>
         </div>
-        <button onClick={onClose} className="bg-white/10 text-white text-[10px] px-4 py-2 rounded-xl font-black uppercase tracking-widest border border-white/10 hover:bg-white/20 transition-all">Exit</button>
+        <button onClick={onClose} className="bg-white/10 text-white text-[10px] px-4 py-2 rounded-xl font-black uppercase tracking-widest border border-white/10 hover:bg-white/20 transition-all">סגירה</button>
       </div>
 
-      {/* Browser URL Bar */}
+      {/* URL Bar */}
       <div className="relative z-20 px-4 py-4 flex-shrink-0">
         <div 
           onClick={handleUrlClick}
-          className={`rounded-[1.5rem] px-5 py-4 flex flex-col transition-all duration-300 border shadow-2xl relative cursor-pointer group ${
+          className={`rounded-[1.5rem] px-5 py-4 flex flex-col transition-all duration-300 border shadow-2xl relative cursor-pointer group text-right ${
             itemsFoundInCurrentStep.includes('url-trap') 
-              ? (currentStep.urlIsTrap ? 'bg-red-500/20 border-red-400' : 'bg-green-500/20 border-green-400')
+              ? (currentStep.urlIsTrap ? 'bg-amber-500/20 border-amber-400' : 'bg-green-500/20 border-green-400')
               : 'bg-white/10 border-white/20 ring-4 ring-sky-400/10 animate-pulse hover:border-sky-400/50'
           }`}
         >
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className={`p-1.5 rounded-lg ${itemsFoundInCurrentStep.includes('url-trap') ? (currentStep.urlIsTrap ? 'bg-red-500' : 'bg-green-500') : 'bg-white/10'}`}>
+          <div className="flex items-center gap-3 overflow-hidden flex-row-reverse">
+            <div className={`p-1.5 rounded-lg ${itemsFoundInCurrentStep.includes('url-trap') ? (currentStep.urlIsTrap ? 'bg-amber-500' : 'bg-green-500') : 'bg-white/10'}`}>
               <Lock size={12} className="text-white" />
             </div>
-            <span className={`text-sm font-mono truncate tracking-tight ${itemsFoundInCurrentStep.includes('url-trap') ? (currentStep.urlIsTrap ? 'text-red-200' : 'text-green-200') : 'text-white/80'}`}>
+            <span className={`text-sm font-mono truncate tracking-tight ${itemsFoundInCurrentStep.includes('url-trap') ? (currentStep.urlIsTrap ? 'text-amber-200' : 'text-green-200') : 'text-white/80'}`}>
               {currentStep.siteUrl}
             </span>
           </div>
           {itemsFoundInCurrentStep.includes('url-trap') && (
             <div className="mt-3 bg-black/30 p-3 rounded-xl border border-white/5 animate-in slide-in-from-top-2">
-              <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${currentStep.urlIsTrap ? 'text-red-400' : 'text-green-400'}`}>
-                {currentStep.urlIsTrap ? 'Trap Detected' : 'Safety Seal Verified'}
+              <p className={`text-[9px] font-black uppercase tracking-widest mb-1 ${currentStep.urlIsTrap ? 'text-amber-400' : 'text-green-400'}`}>
+                {currentStep.urlIsTrap ? 'זוהה סימן מחשיד' : 'כתובת מאומתת'}
               </p>
               <p className="text-xs text-white/90 font-medium leading-relaxed">
                 {currentStep.urlIsTrap ? currentStep.urlDoriWarning : currentStep.urlSafetyReason}
@@ -184,12 +183,26 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
       <div 
         ref={scrollRef}
         onScroll={handleScroll}
-        className="relative z-10 flex-1 min-h-0 overflow-y-auto flex flex-col pt-4 no-scrollbar"
+        className="relative z-10 flex-1 min-h-0 overflow-y-auto flex flex-col pt-4 no-scrollbar text-right"
+        dir="rtl"
       >
         <div className="flex-1 flex flex-col max-w-lg mx-auto w-full px-4 mb-32">
+          {/* Instruction Message */}
+          {itemsFoundInCurrentStep.length === 0 && (
+            <div className="bg-sky-600 text-white p-6 rounded-[2.5rem] shadow-2xl mb-8 flex items-center gap-5 animate-bounce stagger-1 border-4 border-white/20 relative z-50">
+              <div className="bg-white/20 p-4 rounded-3xl">
+                <Fingerprint className="w-10 h-10" />
+              </div>
+              <div className="flex-1 text-right">
+                <p className="font-brand font-black text-2xl leading-tight mb-1">בואו נתחיל באימון!</p>
+                <p className="text-sm font-bold opacity-95">לחצו על כל חלק בהודעה שלמטה. דורי יסביר לכם מה נראה מחשיד או מה נחשב לבטוח.</p>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 flex flex-col">
-            <div className={`${getHeaderBg(currentStep.headerColor)} px-8 py-10 text-white flex justify-between items-center flex-shrink-0 relative overflow-hidden`}>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16" />
+            <div className={`${getHeaderBg(currentStep.headerColor)} px-8 py-10 text-white flex justify-between items-center flex-shrink-0 relative overflow-hidden flex-row-reverse`}>
+              <div className="absolute top-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mt-16" />
               <div className="relative z-10 flex flex-col">
                 <span className="font-brand font-bold tracking-wider uppercase text-xl">{result.simulation.brandName}</span>
                 <span className="text-[10px] opacity-80 font-black uppercase tracking-[0.2em] mt-1">{currentStep.subtitle}</span>
@@ -198,9 +211,9 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
             </div>
 
             <div className="p-8 space-y-10">
-              <div className="space-y-3">
+              <div className="space-y-3 text-right">
                 <h1 className="text-3xl font-black text-slate-800 leading-tight">{currentStep.title}</h1>
-                <div className="h-1.5 w-16 bg-slate-100 rounded-full"></div>
+                <div className="h-1.5 w-16 bg-slate-100 rounded-full mr-0 ml-auto"></div>
               </div>
 
               <div className="space-y-6">
@@ -210,33 +223,33 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
                     onClick={() => handleFieldClick(field)}
                     className={`group relative p-6 border-2 rounded-[2rem] transition-all transform active:scale-[0.98] cursor-pointer ${
                       itemsFoundInCurrentStep.includes(field.id)
-                        ? (field.isTrap ? 'border-red-400 bg-red-50' : 'border-green-400 bg-green-50 shadow-inner')
-                        : 'border-slate-100 bg-slate-50 hover:border-sky-200'
+                        ? (field.isTrap ? 'border-amber-400 bg-amber-50' : 'border-green-400 bg-green-50 shadow-inner')
+                        : 'border-slate-100 bg-slate-50 hover:border-sky-300 ring-4 ring-transparent hover:ring-sky-50 shadow-sm'
                     }`}
                   >
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-2 flex-row-reverse">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{field.label}</label>
                       {itemsFoundInCurrentStep.includes(field.id) && (
-                        field.isTrap ? <AlertCircle size={18} className="text-red-500" /> : <ShieldCheck size={18} className="text-green-500" />
+                        field.isTrap ? <AlertTriangle size={18} className="text-amber-500" /> : <ShieldCheck size={18} className="text-green-500" />
                       )}
                     </div>
                     
-                    <div className="text-lg font-bold text-slate-700 min-h-[1.5rem] flex items-center">
+                    <div className="text-lg font-bold text-slate-700 min-h-[1.5rem] flex items-center justify-end">
                       {field.type === 'button' ? (
-                        <div className={`w-full py-5 rounded-2xl text-center uppercase font-black text-sm tracking-[0.2em] shadow-sm transition-all ${itemsFoundInCurrentStep.includes(field.id) ? (field.isTrap ? 'bg-red-500 text-white shadow-lg' : 'bg-green-500 text-white shadow-lg') : 'bg-white border-2 border-slate-100 text-slate-600'}`}>
+                        <div className={`w-full py-5 rounded-2xl text-center uppercase font-black text-sm tracking-[0.2em] shadow-sm transition-all ${itemsFoundInCurrentStep.includes(field.id) ? (field.isTrap ? 'bg-amber-500 text-white shadow-lg' : 'bg-green-500 text-white shadow-lg') : 'bg-white border-2 border-slate-100 text-slate-600'}`}>
                           {field.label}
                         </div>
                       ) : (
-                        <span className={field.placeholder ? 'text-slate-300 italic' : ''}>{field.placeholder || 'Inspect...'}</span>
+                        <span className={field.placeholder ? 'text-slate-300 italic' : ''}>{field.placeholder || 'לחצו כאן לבדיקה...'}</span>
                       )}
                     </div>
 
                     {itemsFoundInCurrentStep.includes(field.id) && (field.doriWarning || field.safetyReason) && (
-                      <div className={`mt-5 p-5 bg-white rounded-2xl border-2 shadow-xl animate-in slide-in-from-top-4 ${field.isTrap ? 'border-red-100' : 'border-green-100'}`}>
-                        <div className="flex items-center gap-2 mb-2">
-                           {field.isTrap ? <AlertCircle size={18} className="text-red-500" /> : <ShieldCheck size={18} className="text-green-500" />}
-                           <p className={`text-[10px] font-black uppercase tracking-widest ${field.isTrap ? 'text-red-600' : 'text-green-600'}`}>
-                             {field.isTrap ? "Danger Warning" : "Safety Verification"}
+                      <div className={`mt-5 p-5 bg-white rounded-2xl border-2 shadow-xl animate-in slide-in-from-top-4 ${field.isTrap ? 'border-amber-100' : 'border-green-100'}`}>
+                        <div className="flex items-center gap-2 mb-2 flex-row-reverse text-right">
+                           {field.isTrap ? <AlertTriangle size={18} className="text-amber-500" /> : <ShieldCheck size={18} className="text-green-500" />}
+                           <p className={`text-[10px] font-black uppercase tracking-widest ${field.isTrap ? 'text-amber-600' : 'text-green-600'}`}>
+                             {field.isTrap ? "זוהה סימן מחשיד" : "סימן אמינות"}
                            </p>
                         </div>
                         <p className="text-sm text-slate-700 font-bold leading-relaxed">{field.isTrap ? field.doriWarning : field.safetyReason}</p>
@@ -246,11 +259,11 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
                 ))}
               </div>
 
-              <div className="pt-10 border-t border-slate-50">
+              <div className="pt-10 border-t border-slate-50 text-right">
                 <DoriAssistant 
-                  message={itemsFoundInCurrentStep.length === 0 ? currentStep.doriIntro : 
-                           isStepComplete ? `Incredible! You've verified every detail on this page. Move to the next step when you're ready.` :
-                           `Great progress! You've inspected ${itemsFoundInCurrentStep.length} out of ${totalRequired} details. Can you find the rest?`}
+                  message={itemsFoundInCurrentStep.length === 0 ? "הדרך הכי טובה ללמוד היא להתנסות. לחצו על כל חלק בהודעה שמעליי וגלו מה דורי מצא עבורכם." : 
+                           isStepComplete ? `עבודה נהדרת! סיימתם לבדוק את הדף הזה. אפשר לעבור לשלב הבא כשנוח לכם.` :
+                           `מצאתם ${itemsFoundInCurrentStep.length} רמזים מתוך ${totalRequired}. אתם הופכים למומחים דיגיטליים!`}
                 />
               </div>
             </div>
@@ -258,15 +271,15 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
         </div>
       </div>
 
-      {/* Persistent Footer */}
-      <div className="relative z-30 bg-slate-900 px-6 py-6 pb-12 border-t border-white/5 flex justify-between items-center flex-shrink-0 shadow-2xl">
-        <div className="flex flex-col">
+      {/* Footer Controls */}
+      <div className="relative z-30 bg-slate-900 px-6 py-6 pb-12 border-t border-white/5 flex justify-between items-center flex-shrink-0 shadow-2xl flex-row-reverse">
+        <div className="flex flex-col text-right">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">
-            {result.isScam ? 'Scams Spotted' : 'Safety Verified'}
+            {result.isScam ? 'סימנים שזוהו' : 'סימני אמינות'}
           </span>
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center flex-row-reverse">
             {Array.from({ length: totalRequired }).map((_, i) => (
-              <div key={i} className={`h-2.5 w-6 rounded-full transition-all duration-500 ${itemsFoundInCurrentStep.length > i ? (result.isScam ? 'bg-amber-500' : 'bg-green-500') : 'bg-slate-800'}`} />
+              <div key={i} className={`h-2.5 w-6 rounded-full transition-all duration-500 ${itemsFoundInCurrentStep.length > i ? (result.isScam ? 'bg-sky-500' : 'bg-green-500') : 'bg-slate-800'}`} />
             ))}
           </div>
         </div>
@@ -274,12 +287,12 @@ const Sandbox: React.FC<SandboxProps> = ({ result, onClose, onFinish }) => {
         <button 
           onClick={nextStep}
           disabled={!isStepComplete}
-          className={`px-10 py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center gap-3 transition-all ${
+          className={`px-10 py-5 rounded-[2rem] font-black text-sm uppercase tracking-widest flex items-center gap-3 transition-all flex-row-reverse ${
             isStepComplete ? 'bg-sky-500 text-white shadow-2xl shadow-sky-500/30 active:scale-95' : 'bg-slate-800 text-slate-600 border border-slate-700 opacity-50'
           }`}
         >
-          {isFinalStep ? 'Finish Journey' : 'Next Step'}
-          <ArrowRight size={20} />
+          {isFinalStep ? 'סיום האימון' : 'לשלב הבא'}
+          <ArrowRight size={20} className="rotate-180" />
         </button>
       </div>
     </div>

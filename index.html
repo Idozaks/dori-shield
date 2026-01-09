@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>דורי - מנטור דיגיטלי</title>
+    <title>דורי - אימון ואמון דיגיטלי</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -49,10 +49,26 @@
             animation: float 6s ease-in-out infinite;
         }
 
+        @keyframes message-in {
+            0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-message-in {
+            animation: message-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         .stagger-1 { animation-delay: 0.1s; }
         .stagger-2 { animation-delay: 0.2s; }
         .stagger-3 { animation-delay: 0.3s; }
         .stagger-4 { animation-delay: 0.4s; }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 <script type="importmap">
 {
